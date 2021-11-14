@@ -9,7 +9,6 @@ from rest_framework.authtoken.models import Token
 
 class User(AbstractUser):
     USER_TYPES = (
-       ("superadmin", "superadmin"),
        ("admin", "admin"),
        ("employee","employee"),
        ("restaurant","restaurant")
