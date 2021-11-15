@@ -1,4 +1,4 @@
-from .models import Restaurant
+from .models import Restaurant, Menu
 from rest_framework.serializers import ModelSerializer
 
 class  CreateRestaurantSerializer(ModelSerializer):
@@ -7,3 +7,25 @@ class  CreateRestaurantSerializer(ModelSerializer):
         model = Restaurant
         fields = ('name','contact_no','address')
 
+class UploadMenuSerializer(ModelSerializer):
+    
+    def create(self, validated_data):
+
+        menu = Menu(
+            file=validated_data['file'],
+            restaurant=validated_data['restaurant'],
+            uploaded_by=validated_data['uploaded_by']
+        )
+        menu.save()
+        return menu
+
+    class Meta:
+        model = Menu
+        
+        fields = [
+            'restaurant',
+            'file',
+            'uploaded_by'
+
+        ]
+        

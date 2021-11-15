@@ -15,8 +15,11 @@ from rest_framework.status import (
 import string
 import random
 from rest_framework.response import Response
-from .models import Restaurant
-from users.permissions import IsAdmin
+from .models import Restaurant,Menu
+from users.permissions import IsAdmin, IsRestaurant
+from django.conf import settings
+from django.db.models import Q
+from .serializers import UploadMenuSerializer
 
 class CreateRestaurantAPIView(APIView):
     permission_classes = [IsAdmin]
@@ -49,5 +52,41 @@ class CreateRestaurantAPIView(APIView):
         }
        
         return Response({'status':'success', 'data':response_data},status=HTTP_400_BAD_REQUEST )
+        
+        
+class UploadMenuAPIView(APIView):
+    permission_classes = [IsRestaurant]
+
+    def post(self, request,format=None):
+
+        try:
+            req = request.data
+            todays_date = settings.CURRENT_DATE.date()
+            print('today_date',todays_date)
+            menu = Menu.objects.filter(
+                Q(restaurant__id=int(req.get('restaurant')))
+                and Q(created_at__date=todays_date))
+
+            if menu.exists():
+                response_data = {
+                    "msg": "Menu already added.",
+                    "data": None}
+                return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
+
+            serializer = UploadMenuSerializer(data=req)
+
+            if serializer.is_valid():
+                serializer.save()
+                response_data = {
+                    "msg": "Menu uploaded",
+                    "data": serializer.data}
+                return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
+
+        except Exception as e:
+            print('error',e)
+            response_data = {"msg": "Unexpected error occured", "success": False, "data": None}
+            return Response({'status':'success', 'data':response_data},status=HTTP_400_BAD_REQUEST )
+        
+        
         
         
