@@ -19,9 +19,9 @@ from .models import Restaurant,Menu
 from users.permissions import IsAdmin, IsRestaurant
 from django.conf import settings
 from django.db.models import Q
-from .serializers import UploadMenuSerializer
+from .serializers import UploadMenuSerializer,MenuListSerializer
 
-class CreateRestaurantAPIView(APIView):
+class CreateRestaurant(APIView):
     permission_classes = [IsAdmin]
     
     def post(self, request, format=None):
@@ -54,7 +54,7 @@ class CreateRestaurantAPIView(APIView):
         return Response({'status':'success', 'data':response_data},status=HTTP_400_BAD_REQUEST )
         
         
-class UploadMenuAPIView(APIView):
+class UploadMenu(APIView):
     permission_classes = [IsRestaurant]
 
     def post(self, request,format=None):
@@ -87,6 +87,14 @@ class UploadMenuAPIView(APIView):
             response_data = {"msg": "Unexpected error occured", "success": False, "data": None}
             return Response({'status':'success', 'data':response_data},status=HTTP_400_BAD_REQUEST )
         
-        
+class CurrentDayMenuList(APIView):
+    permission_classes = [IsRestaurant]
+    
+    def get(self, request):
+        todays_date = settings.CURRENT_DATE.date()
+        qs = Menu.objects.filter(Q(created_at__date=todays_date))
+        serializer = MenuListSerializer(qs, many=True)
+        response_data = {"msg": 'success', "data": serializer.data, "success": True}
+        return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
         
         

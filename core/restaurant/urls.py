@@ -1,11 +1,15 @@
 from django.urls import path
-from .views import CreateRestaurantAPIView,UploadMenuAPIView
+from .views import CreateRestaurant,UploadMenu,CurrentDayMenuList
 
 urlpatterns = [
  path('create_restaurant/',
-      CreateRestaurantAPIView.as_view(),
+      CreateRestaurant.as_view(),
       name="create-restaurant"),
   path('upload_menu/',
-      UploadMenuAPIView.as_view(),
+      UploadMenu.as_view(),
       name="upload-menu"),
+   path('current_day_menu/',
+      CurrentDayMenuList.as_view(),
+      name="current-menu"),
+  
 ]

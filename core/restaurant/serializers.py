@@ -29,3 +29,8 @@ class UploadMenuSerializer(ModelSerializer):
 
         ]
         
+class MenuListSerializer(ModelSerializer):
+    
+    class Meta:
+        model = Menu
+        fields = '__all__'
