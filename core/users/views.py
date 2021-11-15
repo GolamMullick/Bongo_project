@@ -43,6 +43,10 @@ class UserDetails(APIView):
         user_type = request.data.get('user_type')
 
 
+
+        if name is None:
+            return Response({'error':'Please provide username'}, status=HTTP_400_BAD_REQUEST)
+
         if mobile_no is None or not mobile_no.startswith('01') or len(mobile_no) != 11:
                 return Response({'error':'You need to provide a valid Bangladeshi mobile number without country code.'}, status=HTTP_400_BAD_REQUEST)
     

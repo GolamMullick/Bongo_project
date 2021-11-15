@@ -8,6 +8,7 @@ from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
 
 class User(AbstractUser):
+    """Represents user class model"""
     USER_TYPES = (
        ("admin", "admin"),
        ("employee","employee"),
@@ -21,7 +22,8 @@ class User(AbstractUser):
     is_verified = models.BooleanField(default=True)
     mobile_no = models.CharField(null=True, blank=True, max_length=16)
     user_type = models.CharField(choices=USER_TYPES,max_length=28)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email','user_type']

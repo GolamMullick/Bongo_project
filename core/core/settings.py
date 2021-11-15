@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'users',
     'rest_framework.authtoken',
     'corsheaders',
+    'employee',
+    'restaurant',
 
 ]
 
