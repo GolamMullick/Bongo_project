@@ -18,3 +18,4 @@ docker-compose up -d
 docker-compose exec web python manage.py createsuperuser
 user_type should be admin
 ```
+c
