@@ -25,8 +25,8 @@ class UploadMenuSerializer(ModelSerializer):
         fields = [
             'restaurant',
             'file',
-            'uploaded_by'
-
+            'uploaded_by',
+            'name'
         ]
         
 class MenuListSerializer(ModelSerializer):
