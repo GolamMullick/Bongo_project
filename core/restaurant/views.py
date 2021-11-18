@@ -40,7 +40,7 @@ class CreateRestaurant(APIView):
             return Response({'error': 'Please create new restaurant, this restaurant is already created'},
                     status=HTTP_400_BAD_REQUEST)
             
-        new_restaurant=Restaurant(name=name,address=address,contact_no=contact_no)
+        new_restaurant=Restaurant(name=name,address=address,contact_no=contact_no,user=request.user.username)
         new_restaurant.save()
         
         response_data = {

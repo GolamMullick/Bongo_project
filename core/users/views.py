@@ -35,7 +35,7 @@ def generate_password_by_policy(length=8):
     return password
 
 
-@csrf_exempt
+# @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
 def login(request):

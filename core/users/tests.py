@@ -2,9 +2,7 @@
 from datetime import timedelta
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
-
 from .models import User
-
 from rest_framework import status
 from rest_framework.test import APITestCase
 

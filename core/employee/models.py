@@ -24,10 +24,9 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
     
-    
 class Vote(models.Model):
     """Represents vote class model"""
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee = models.ForeignKey(User, on_delete=models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
     voted_at = models.DateTimeField(auto_now_add=True)
 

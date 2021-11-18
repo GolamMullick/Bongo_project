@@ -21,62 +21,76 @@ from django.db.models import Q
 from django.conf import settings
 from restaurant.models import Menu, Restaurant
 from .serializers import ResultMenuListSerializer
+from users.models import User
 
-class CreateEmployeeAPIView(APIView):
-    permission_classes = [IsAdmin]
+
+# class CreateEmployeeAPIView(APIView):
+#     permission_classes = [IsAdmin]
     
-    def post(self, request, format=None):
+#     def post(self, request, format=None):
         
-        name = request.data.get('name')
-        employee_no =request.data.get ('employee_no')
+#         name = request.data.get('name')
+#         employee_no =request.data.get ('employee_no')
+#         print('user',request.user.pk)
         
-        if name is None or employee_no is None:
-            return Response({'error': 'Please provide both name and employee number'},
-                    status=HTTP_400_BAD_REQUEST)
+#         if name is None or employee_no is None:
+#             return Response({'error': 'Please provide both name and employee number'},
+#                     status=HTTP_400_BAD_REQUEST)
             
-        employee_data = Employee.objects.filter(Q(name=name) and Q(employee_no=employee_no))
+#         employee_data = Employee.objects.filter(Q(name=name) and Q(employee_no=employee_no))
         
-        if employee_data.exists():
-            return Response({'error': 'Please create new employee, this employee is already created'},
-                    status=HTTP_400_BAD_REQUEST)
+#         if employee_data.exists():
+#             return Response({'error': 'Please create new employee, this employee is already created'},
+#                     status=HTTP_400_BAD_REQUEST)
             
-        new_employee=Employee(name=name,employee_no=employee_no)
-        new_employee.save()
+#         new_employee=Employee(name=name,employee_no=employee_no,user=request.user.username)
+#         new_employee.save()
         
-        response_data = {
-              "msg": "Employee Created",
-              "name":new_employee.name,
-              "employee_no":new_employee.employee_no
+#         response_data = {
+#               "msg": "Employee Created",
+#               "name":new_employee.name,
+#               "employee_no":new_employee.employee_no
               
-        }
+#         }
        
-        return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
-        
-        
+        #return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
+          
 class VoteAPIView(APIView):
     permission_classes = [IsEmployee]
 
-    def get(self, request, menu_id):
-        username = request.get('username')
+    def post(self,request,format=None):
+        
+        username = request.data.get('username')
+        menu_id = request.data.get('menu_id')
         todays_date = settings.CURRENT_DATE.date()
 
-        employee = Employee.objects.get(user__username=username)
-        menu = Menu.objects.get(id=menu_id)
-
+        employee = User.objects.filter(username=username).first()
+        print('employee',employee)
+        
+        if not employee:
+            return Response({'status':'failed', 'messege':"Employee not found"},status=HTTP_400_BAD_REQUEST )
+        
+        menu = Menu.objects.filter(id=menu_id).first()
+        
+        if not menu:
+            return Response({'status':'failed', 'messege':"Menu not found"},status=HTTP_400_BAD_REQUEST )
+        
         if Vote.objects.filter(
-                employee__user__username=username,
+                employee__username=username,
                 voted_at__date=todays_date,
                 menu__id=menu_id).exists():
             response_data = {"msg": 'You already voted!', "data": None}
             
             return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
-       
+    
         else:
-            new_vote = Vote.objects.create(
+            new_vote = Vote(
                 employee=employee,
                 menu=menu
-
             )
+
+            new_vote.save()
+            
             menu.votes += 1
             menu.save()
 
@@ -87,4 +101,8 @@ class VoteAPIView(APIView):
                 "data": serializer.data,
             }
             
-            return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
+        return Response({'status':'success', 'data':response_data},status=HTTP_200_OK )
+        
+           
+                
+            
